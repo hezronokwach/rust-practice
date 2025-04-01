@@ -1,30 +1,28 @@
 use std::io;
 
 fn main() {
-    let mut trials = 0;
-    let riddle = "I am the beginning of the end, and the end of time and space. I am essential to creation, and I surround every place. What am I?";
-    
-    println!("{}", riddle);
-    
+    let mut count = 0;
+    let answer = "e";
+
     loop {
+        count = count + 1;
+        
+        println!("I am the beginning of the end, and the end of time and space. I am essential to creation, and I surround every place. What am I?");
+        
         let mut input = String::new();
         
-        match io::stdin().read_line(&mut input) {
-            Ok(_) => {
-                trials += 1;
-                let answer = input.trim().to_lowercase();
-                
-                if answer == "e" || answer == "the letter e" {
-                    println!("The letter e");
-                    println!("Number of trials {}", trials);
-                    break;
-                } else {
-                    println!("{}", riddle);
-                }
-            },
-            Err(_) => {
-                println!("Error reading input. Please try again.");
-            }
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+        
+        let input = input.trim().to_lowercase();
+        
+        if input.as_str() == answer {
+            println!("The letter e");
+            println!("Number of trials {}", count);
+            break;
+        } else {
+            continue;
         }
     }
 }
