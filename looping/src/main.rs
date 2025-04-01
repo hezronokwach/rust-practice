@@ -2,7 +2,7 @@ use std::io;
 
 fn main() {
     let mut count = 0;
-    let answer = "e";
+    let answer = "The letter e";
 
     loop {
         count = count + 1;
