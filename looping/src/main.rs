@@ -17,12 +17,15 @@ fn main() {
         
         let input = input.trim().to_lowercase();
         
-        if input.as_str() == answer {
-            println!("The letter e");
-            println!("Number of trials {}", count);
-            break;
-        } else {
-            continue;
+        match input.as_str() {
+            s if s == answer => {
+                println!("The letter e");
+                println!("Number of trials {}", count);
+                break;
+            }
+            _ => {
+                continue;
+            }
         }
     }
 }
