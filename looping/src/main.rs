@@ -10,7 +10,7 @@ fn main() {
         ans.clear();
         io::stdin().read_line(&mut ans).expect("Failed input");
         trials += 1;
-        let ans2 = ans.trim();
+        let ans2 = ans.trim().to_lowercase();
         if ans2 == "e" {      
             println!("The letter e");
             println!("Number of trials {}", trials);
