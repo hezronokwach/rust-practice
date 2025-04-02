@@ -15,13 +15,16 @@ pub fn delete_and_backspace(s: &mut String) {
         }
     }
 }
-
 pub fn do_operations(v: &mut [String]) {
     for string in v.iter_mut() {
-        let parts = string.split_whitespace(); // Iterator: ["1", "+", "2"]
-        let vec = parts.collect::<Vec<_>>(); // Vector: ["1", "+", "2"]
-        let tuple = vec.match_tuple(); // Option<("1", "+", "2")>
-        if let Some((left, op, right)) = tuple {
+        let parts: Vec<&str> = string.split_whitespace().collect();
+        
+        // Match vector with exactly 3 elements
+        if parts.len() == 3 {
+            let left = parts[0];
+            let op = parts[1];
+            let right = parts[2];
+            
             let left_num: i32 = left.parse().unwrap_or(0);
             let right_num: i32 = right.parse().unwrap_or(0);
 
