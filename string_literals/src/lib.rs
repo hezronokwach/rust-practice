@@ -15,11 +15,8 @@ pub fn split_at(v: &str, index: usize) -> (&str, &str) {
 }
 
 pub fn find(v: &str, pat: char) -> usize {
-    let mut j = 0;
-    for (i,c) in v.chars().enumerate(){
-        if c == pat{
-            j = i
-        }
-    }
-    j
-}
+    if let Some(i) = v.find(pat){
+      return  i;
+     }
+     return 0;
+  }
