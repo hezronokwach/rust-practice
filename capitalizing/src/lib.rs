@@ -7,28 +7,21 @@ pub fn capitalize_first(input: &str) -> String {
 }
 
 pub fn title_case(input: &str) -> String {
-    let mut result = String::new();
-    let words: Vec<&str> = input.split_whitespace().collect();
-    
-    for (i, word) in words.iter().enumerate() {
-        result.push_str(&capitalize_first(word));
-        if i < words.len() - 1 {
-            result.push(' ');
-        }
+    let split = input.split_whitespace();
+    for name in split{
+        capitalize_first(name);
     }
-    result
+    input.to_string()
 }
 
 pub fn change_case(input: &str) -> String {
     let mut result = String::new();
-    for chars in input.chars(){
-        if chars.is_lowercase(){
-            result.push(chars)
-        } else if chars.is_uppercase(){
-            result.push(chars)
-        } else{
-            result.push(chars)
+    for c in input.chars() {
+        if c.is_uppercase() {
+            result.push(c.to_lowercase().next().unwrap());
+        } else {
+            result.push(c.to_uppercase().next().unwrap());
         }
     }
-    result   
+    result
 }
