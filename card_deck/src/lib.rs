@@ -1,5 +1,4 @@
-use rand::Rng;
-
+use rand::prelude::*;
 pub enum Suit {
     Heart,
     Diamond,
