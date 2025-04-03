@@ -1,10 +1,15 @@
 pub fn capitalize_first(input: &str) -> String {
-    let mut chars = input.chars();
-    match chars.next() {
-        None => String::new(),
-        Some(first) => first.to_uppercase().chain(chars).collect()
+    if input.is_empty() {
+        return String::new();
     }
+    
+    let first_char = input.chars().next().unwrap().to_uppercase().to_string();
+    
+    let rest = input.chars().skip(1).collect::<String>();
+    
+    first_char + &rest
 }
+
 
 pub fn title_case(input: &str) -> String {
     input.split_whitespace()
