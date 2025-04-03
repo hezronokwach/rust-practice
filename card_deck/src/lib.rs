@@ -69,10 +69,10 @@ pub struct Card {
 }
 
 pub fn winner_card(card: Card) -> bool {
-    if card == Card {
+    if card == (Card {
         suit: Suit::Spade,
         rank: Rank::Ace,
-    } {
+    }) {
         return true;
     }
     false
