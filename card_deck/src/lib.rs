@@ -1,4 +1,4 @@
-use rand::prelude::*;
+use rand::Rng;
 pub enum Suit {
     Heart,
     Diamond,
@@ -53,5 +53,10 @@ pub struct Card {
 }
 
 pub fn winner_card(card: &Card) -> bool {
-    matches!((&card.suit, &card.rank), (&Suit::Spade, &Rank::Ace))
+    if let Suit::Spade = card.suit {
+        if let Rank::Ace = card.rank {
+            return true;
+        }
+    }
+    false
 }
