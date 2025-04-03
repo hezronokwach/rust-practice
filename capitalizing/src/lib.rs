@@ -13,11 +13,33 @@ pub fn capitalize_first(input: &str) -> String {
 
 
 pub fn title_case(input: &str) -> String {
-    input
-        .split_whitespace()
-        .map(|s| capitalize_first(s))
-        .collect::<Vec<String>>()
-        .join(" ")
+    // Use a regex to split by whitespace but capture the whitespace
+    let mut result = String::new();
+    let mut last_end = 0;
+    
+    // Process each word separately
+    for word in input.split_whitespace() {
+        // Find the word's position in the original string
+        let word_start = input[last_end..].find(word).unwrap() + last_end;
+        
+        // Add any whitespace that came before this word
+        if word_start > last_end {
+            result.push_str(&input[last_end..word_start]);
+        }
+        
+        // Add the capitalized word
+        result.push_str(&capitalize_first(word));
+        
+        // Update the last position
+        last_end = word_start + word.len();
+    }
+    
+    // Add any trailing whitespace
+    if last_end < input.len() {
+        result.push_str(&input[last_end..]);
+    }
+    
+    result
 }
 
 pub fn change_case(input: &str) -> String {
