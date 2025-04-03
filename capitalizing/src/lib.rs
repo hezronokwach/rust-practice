@@ -1,13 +1,14 @@
 pub fn capitalize_first(input: &str) -> String {
-    if input.is_empty() {
-        return String::new();
+    if let Some(first) = input.chars().next() {
+        let c = first.to_ascii_uppercase().to_string();
+        let r = input
+            .chars()
+            .skip(1)
+            .collect::<String>()
+            .to_ascii_lowercase();
+        return format!("{}{}", c, r);
     }
-    
-    let first_char = input.chars().next().unwrap().to_uppercase().to_string();
-    
-    let rest = input.chars().skip(1).collect::<String>();
-    
-    first_char + &rest
+    String::new()
 }
 
 
