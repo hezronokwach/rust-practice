@@ -71,8 +71,8 @@ pub fn rem(a: &str, b: &str) -> Result<String, ParseFloatError> {
     
     // Check for division by zero
     if b_num == 0.0 {
-        // Since we're limited to ParseFloatError, we can't return a custom error
-        return Ok("Remainder by zero".to_string());
+        // Return "NaN" for remainder by zero to match the expected test output
+        return Ok("NaN".to_string());
     }
     
     // Perform the remainder operation and return the result as a string
