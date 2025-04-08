@@ -1,3 +1,5 @@
+#[derive(Debug, Clone, Eq, PartialEq)]
+
 pub struct CipherError {
     pub expected: String,
 }
