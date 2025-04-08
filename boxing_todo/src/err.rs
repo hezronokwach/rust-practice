@@ -8,7 +8,6 @@ pub enum ParseErr {
     Malformed(Box<dyn Error>),
 }
 
-// required by error trait
 impl Display for ParseErr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Fail to parse todo")
