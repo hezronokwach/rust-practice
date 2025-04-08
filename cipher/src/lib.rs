@@ -1,29 +1,16 @@
-#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct CipherError {
-    pub validation: bool,
     pub expected: String,
 }
 
-impl CipherError {
-    pub fn new(validation: bool, expected: String) -> CipherError {
-        CipherError {
-            validation,
-            expected,
-        }
-    }
-}
-
-pub fn cipher(original: &str, ciphered: &str) -> Option<Result<bool, CipherError>> {
-    if original.is_empty() || ciphered.is_empty() {
-        return None;
-    }
-
+pub fn cipher(original: &str, ciphered: &str) -> Result<(), CipherError> {
     let expected = atbash_cipher(original);
 
     if expected == ciphered {
-        Some(Ok(true))
+        Ok(())
     } else {
-        Some(Err(CipherError::new(false, expected)))
+        Err(CipherError {
+            expected
+        })
     }
 }
 
