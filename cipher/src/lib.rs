@@ -1,42 +1,41 @@
-// Define the error type for cipher validation
-#[derive(Debug)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct CipherError {
+    pub validation: bool,
     pub expected: String,
 }
 
-// The main cipher function that validates if a string is correctly encoded using the Atbash cipher
-pub fn cipher(original: &str, ciphered: &str) -> Result<(), CipherError> {
-    // Generate the expected Atbash cipher for the original string
-    let expected = atbash_encode(original);
-    
-    // Compare the expected cipher with the provided ciphered string
-    if expected == ciphered {
-        Ok(())
-    } else {
-        Err(CipherError { expected })
+impl CipherError {
+    pub fn new(validation: bool, expected: String) -> CipherError {
+        CipherError {
+            validation,
+            expected,
+        }
     }
 }
 
-// Helper function to encode a string using the Atbash cipher
-fn atbash_encode(input: &str) -> String {
-    input
-        .chars()
+pub fn cipher(original: &str, ciphered: &str) -> Option<Result<bool, CipherError>> {
+    if original.is_empty() || ciphered.is_empty() {
+        return None;
+    }
+
+    let expected = atbash_cipher(original);
+
+    if expected == ciphered {
+        Some(Ok(true))
+    } else {
+        Some(Err(CipherError::new(false, expected)))
+    }
+}
+
+fn atbash_cipher(text: &str) -> String {
+    text.chars()
         .map(|c| {
             if c.is_ascii_alphabetic() {
-                // For alphabetic characters, apply the Atbash transformation
-                if c.is_ascii_lowercase() {
-                    // For lowercase: 'a' becomes 'z', 'b' becomes 'y', etc.
-                    // ASCII 'a' is 97, 'z' is 122
-                    // The formula is: 'a' + 'z' - c = 97 + 122 - c = 219 - c
-                    char::from(219 - c as u8)
-                } else {
-                    // For uppercase: 'A' becomes 'Z', 'B' becomes 'Y', etc.
-                    // ASCII 'A' is 65, 'Z' is 90
-                    // The formula is: 'A' + 'Z' - c = 65 + 90 - c = 155 - c
-                    char::from(155 - c as u8)
-                }
+                let base = if c.is_ascii_lowercase() { b'a' } else { b'A' };
+                let b = if c.is_ascii_lowercase() { b'z' } else { b'Z' };
+                let mirrored = (base + (b - c as u8)) as char;
+                mirrored
             } else {
-                // Non-alphabetic characters remain unchanged
                 c
             }
         })
