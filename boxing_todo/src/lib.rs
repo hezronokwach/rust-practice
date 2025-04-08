@@ -1,5 +1,5 @@
 mod err;
-use err::{ParseErr, ReadErr};
+pub use err::{ParseErr, ReadErr};
 
 use std::error::Error;
 use std::{fs::File, io::Read};
@@ -25,17 +25,21 @@ impl TodoList {
                 child_err: Box::new(e),
             }) as Box<dyn Error>
         })?;
+        
         let mut s = String::new();
         file.read_to_string(&mut s).map_err(|e| {
             Box::new(ReadErr {
                 child_err: Box::new(e),
             }) as Box<dyn Error>
         })?;
+        
         if s.trim().is_empty() {
             return Err(Box::new(ParseErr::Empty));
         }
-        let parsed_json =
-            json::parse(&s).map_err(|e| Box::new(ParseErr::Malformed(Box::new(e)))) ?;
+        
+        let parsed_json = json::parse(&s)
+            .map_err(|e| Box::new(ParseErr::Malformed(Box::new(e))))?;
+        
         let title = parsed_json["title"]
             .as_str()
             .ok_or_else(|| Box::new(ParseErr::Empty))?
@@ -61,6 +65,7 @@ impl TodoList {
             };
             tasks.push(task)
         }
+        
         Ok(TodoList { title, tasks })
     }
 }
