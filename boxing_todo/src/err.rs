@@ -1,61 +1,44 @@
-mod err;
+use std::error::Error;
+use std::fmt;
+use std::fmt::Display;
 
-use std::{error::Error, fs};
-use err::{ParseErr, ReadErr};
-use json;
-
-#[derive(Debug, Eq, PartialEq)]
-pub struct Task {
-    pub id: u32,
-    pub description: String,
-    pub level: u32,
+#[derive(Debug)]
+pub enum ParseErr {
+    Empty,
+    Malformed(Box<dyn Error>),
 }
 
-#[derive(Debug, Eq, PartialEq)]
-pub struct TodoList {
-    pub title: String,
-    pub tasks: Vec<Task>,
+// required by error trait
+impl Display for ParseErr {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Fail to parse todo")
+    }
 }
 
-impl TodoList {
-    pub fn get_todo(path: &str) -> Result<TodoList, Box<dyn Error>> {
-        // Read the file
-        let content = fs::read_to_string(path).map_err(|e| {
-            Box::new(ReadErr {
-                child_err: Box::new(e),
-            }) as Box<dyn Error>
-        })?;
+#[derive(Debug)]
+pub struct ReadErr {
+    // expected public fields
+    pub child_err: Box<dyn Error>,
+}
 
-        // Parse the JSON
-        let parsed = json::parse(&content).map_err(|e| {
-            Box::new(ParseErr::Malformed(Box::new(e))) as Box<dyn Error>
-        })?;
+// required by error trait
+impl Display for ReadErr {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Fail to read todo file")
+    }
+}
 
-        // Extract title
-        let title = parsed["title"].as_str().unwrap_or("").to_string();
-
-        // Extract tasks
-        let tasks_json = &parsed["tasks"];
-        
-        // Check if tasks array is empty
-        if tasks_json.is_array() && tasks_json.members().count() == 0 {
-            return Err(Box::new(ParseErr::Empty));
+impl Error for ParseErr {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            ParseErr::Empty => None,
+            ParseErr::Malformed(_) => Some(self),
         }
+    }
+}
 
-        // Parse tasks
-        let mut tasks = Vec::new();
-        for task in tasks_json.members() {
-            let id = task["id"].as_u32().unwrap_or(0);
-            let description = task["description"].as_str().unwrap_or("").to_string();
-            let level = task["level"].as_u32().unwrap_or(0);
-
-            tasks.push(Task {
-                id,
-                description,
-                level,
-            });
-        }
-
-        Ok(TodoList { title, tasks })
+impl Error for ReadErr {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        Some(self.child_err.as_ref())
     }
 }
