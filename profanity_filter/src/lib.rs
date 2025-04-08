@@ -19,9 +19,10 @@ impl Message {
     }
 }
 
-pub fn check_ms(message: &Message) -> (bool, &str) {
-    match message.send_ms() {
-        None => (false, "ERROR: illegal"),
-        Some(_) => (true, &message.content),
+pub fn check_ms(message: &str) -> Result<&str, &str> {
+    if message.is_empty() || message.to_lowercase().contains("stupid") {
+        Err("ERROR: illegal")
+    } else {
+        Ok(message)
     }
 }
