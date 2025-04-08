@@ -1,9 +1,9 @@
 mod err;
 use err::{ParseErr, ReadErr};
 
-pub use json::{parse, stringify};
-pub use std::error::Error;
+use std::error::Error;
 use std::{fs::File, io::Read};
+extern crate json;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Task {
@@ -29,17 +29,13 @@ impl TodoList {
         file.read_to_string(&mut s).map_err(|e| {
             Box::new(ReadErr {
                 child_err: Box::new(e),
-    ///
-    /// # Examples
-    ///
-    /// 
             }) as Box<dyn Error>
         })?;
         if s.trim().is_empty() {
             return Err(Box::new(ParseErr::Empty));
         }
         let parsed_json =
-            parse(&s).map_err(|e| Box::new(ParseErr::Malformed(Box::new(e)))) ?;
+            json::parse(&s).map_err(|e| Box::new(ParseErr::Malformed(Box::new(e)))) ?;
         let title = parsed_json["title"]
             .as_str()
             .ok_or_else(|| Box::new(ParseErr::Empty))?
