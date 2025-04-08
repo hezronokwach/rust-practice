@@ -10,7 +10,16 @@ pub enum ParseErr {
 
 impl Display for ParseErr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Fail to parse todo")
+        write!(f, "Failed to parse todo file")
+    }
+}
+
+impl Error for ParseErr {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            ParseErr::Empty => None,
+            ParseErr::Malformed(err) => Some(err.as_ref()),
+        }
     }
 }
 
@@ -21,16 +30,7 @@ pub struct ReadErr {
 
 impl Display for ReadErr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Fail to read todo file")
-    }
-}
-
-impl Error for ParseErr {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        match self {
-            ParseErr::Empty => None,
-            ParseErr::Malformed(err) => Some(err.as_ref()),
-        }
+        write!(f, "Failed to read todo file")
     }
 }
 
