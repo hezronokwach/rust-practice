@@ -20,38 +20,59 @@ pub struct TodoList {
 
 impl TodoList {
     pub fn get_todo(path: &str) -> Result<TodoList, Box<dyn Error>> {
-        let mut file = File::open(path).map_err(|e| {
-            Box::new(ReadErr {
-                child_err: Box::new(e),
-            })
-        })?;
+        // Open the file
+        let file_result = File::open(path);
+        let mut file = match file_result {
+            Ok(f) => f,
+            Err(e) => {
+                // Create a ReadErr with the file open error
+                let read_err = ReadErr {
+                    child_err: Box::new(e),
+                };
+                return Err(Box::new(read_err));
+            }
+        };
         
-        let mut s = String::new();
-        file.read_to_string(&mut s).map_err(|e| {
-            Box::new(ReadErr {
-                child_err: Box::new(e),
-            })
-        })?;
+        // Read the file content
+        let mut content = String::new();
+        match file.read_to_string(&mut content) {
+            Ok(_) => {},
+            Err(e) => {
+                // Create a ReadErr with the file read error
+                let read_err = ReadErr {
+                    child_err: Box::new(e),
+                };
+                return Err(Box::new(read_err));
+            }
+        }
         
-        if s.trim().is_empty() {
+        // Check if the content is empty
+        if content.trim().is_empty() {
             return Err(Box::new(ParseErr::Empty));
         }
         
-        let parsed_json = match json::parse(&s) {
+        // Parse the JSON
+        let parsed_json = match json::parse(&content) {
             Ok(json) => json,
-            Err(e) => return Err(Box::new(ParseErr::Malformed(Box::new(e)))),
+            Err(e) => {
+                // Create a ParseErr::Malformed with the JSON parse error
+                return Err(Box::new(ParseErr::Malformed(Box::new(e))));
+            }
         };
         
+        // Extract the title
         let title = match parsed_json["title"].as_str() {
             Some(t) => t.to_string(),
             None => return Err(Box::new(ParseErr::Empty)),
         };
 
-        let mut tasks: Vec<Task> = Vec::new();
+        // Check if there are any tasks
         if parsed_json["tasks"].len() == 0 {
             return Err(Box::new(ParseErr::Empty));
         }
 
+        // Parse the tasks
+        let mut tasks = Vec::new();
         for i in 0..parsed_json["tasks"].len() {
             let id = match parsed_json["tasks"][i]["id"].as_u32() {
                 Some(id) => id,
@@ -75,6 +96,7 @@ impl TodoList {
             });
         }
         
+        // Return the TodoList
         Ok(TodoList { title, tasks })
     }
 }
