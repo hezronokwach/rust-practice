@@ -24,6 +24,10 @@ pub struct Form {
 }
 
 impl Form {
+    pub fn new(name: String, password: String) -> Self {
+        Form { name, password }
+    }
+    
     pub fn validate(&self) -> Result<(), FormError> {
         // Check if name is empty
         if self.name.is_empty() {
