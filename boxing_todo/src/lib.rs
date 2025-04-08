@@ -23,27 +23,29 @@ impl TodoList {
         let mut file = File::open(path).map_err(|e| {
             Box::new(ReadErr {
                 child_err: Box::new(e),
-            }) as Box<dyn Error>
+            })
         })?;
         
         let mut s = String::new();
         file.read_to_string(&mut s).map_err(|e| {
             Box::new(ReadErr {
                 child_err: Box::new(e),
-            }) as Box<dyn Error>
+            })
         })?;
         
         if s.trim().is_empty() {
             return Err(Box::new(ParseErr::Empty));
         }
         
-        let parsed_json = json::parse(&s)
-            .map_err(|e| Box::new(ParseErr::Malformed(Box::new(e))))?;
+        let parsed_json = match json::parse(&s) {
+            Ok(json) => json,
+            Err(e) => return Err(Box::new(ParseErr::Malformed(Box::new(e)))),
+        };
         
-        let title = parsed_json["title"]
-            .as_str()
-            .ok_or_else(|| Box::new(ParseErr::Empty))?
-            .to_string();
+        let title = match parsed_json["title"].as_str() {
+            Some(t) => t.to_string(),
+            None => return Err(Box::new(ParseErr::Empty)),
+        };
 
         let mut tasks: Vec<Task> = Vec::new();
         if parsed_json["tasks"].len() == 0 {
@@ -51,19 +53,26 @@ impl TodoList {
         }
 
         for i in 0..parsed_json["tasks"].len() {
-            let task = Task {
-                id: parsed_json["tasks"][i]["id"]
-                    .as_u32()
-                    .ok_or(Box::new(ParseErr::Empty))?,
-                description: parsed_json["tasks"][i]["description"]
-                    .as_str()
-                    .ok_or_else(|| Box::new(ParseErr::Empty))?
-                    .to_string(),
-                level: parsed_json["tasks"][i]["level"]
-                    .as_u32()
-                    .ok_or_else(|| Box::new(ParseErr::Empty))?,
+            let id = match parsed_json["tasks"][i]["id"].as_u32() {
+                Some(id) => id,
+                None => return Err(Box::new(ParseErr::Empty)),
             };
-            tasks.push(task)
+            
+            let description = match parsed_json["tasks"][i]["description"].as_str() {
+                Some(desc) => desc.to_string(),
+                None => return Err(Box::new(ParseErr::Empty)),
+            };
+            
+            let level = match parsed_json["tasks"][i]["level"].as_u32() {
+                Some(lvl) => lvl,
+                None => return Err(Box::new(ParseErr::Empty)),
+            };
+            
+            tasks.push(Task {
+                id,
+                description,
+                level,
+            });
         }
         
         Ok(TodoList { title, tasks })
