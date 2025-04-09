@@ -5,27 +5,17 @@ pub use mall::floor::store::*;
 pub use mall::floor::*;
 pub use mall::*;
 /// Returns the store with the largest square meters in the mall
-pub fn biggest_store(mall: &Mall) -> Option<Store> {
-    let mut biggest: Option<&Store> = None;
-    
-    for floor in &mall.floors {
-        for store in &floor.stores {
-            match biggest {
-                None => biggest = Some(store),
-                Some(current_biggest) => {
-                    if store.square_meters > current_biggest.square_meters {
-                        biggest = Some(store);
-                    }
-                }
-            }
-        }
-    }
-    
-    biggest.cloned()
+pub fn biggest_store(mall: Mall) -> Store {
+    mall.floors
+        .iter()
+        .flat_map(|floor| &floor.stores)
+        .max_by_key(|store| store.square_meters)
+        .cloned()
+        .unwrap()
 }
 
 /// Returns a vector of employees with the highest salary in the mall
-pub fn highest_paid_employee(mall: &Mall) -> Vec<Employee> {
+pub fn highest_paid_employee(mall: Mall) -> Vec<Employee> {
     let mut highest_salary = 0.0;
     let mut highest_paid: Vec<Employee> = Vec::new();
     
@@ -55,7 +45,7 @@ pub fn highest_paid_employee(mall: &Mall) -> Vec<Employee> {
 }
 
 /// Returns the total number of employees and guards in the mall
-pub fn nbr_of_employees(mall: &Mall) -> usize {
+pub fn nbr_of_employees(mall: Mall) -> usize {
     let mut count = mall.guards.len();
     
     for floor in &mall.floors {
