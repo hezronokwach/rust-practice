@@ -9,7 +9,7 @@ pub fn talking(text: &str) -> &str {
             } else if text.chars().last().unwrap() == '?' {
                 return "Quiet, I am thinking!";
             }
-        } else if text.chars().last().unwrap() == '?' {
+        } else if i+1 < text.len() && char.is_uppercase() && text.chars().nth(i+1).unwrap().is_lowercase() {
             return "Sure.";
 
         }else {
