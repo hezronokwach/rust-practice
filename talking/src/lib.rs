@@ -10,9 +10,11 @@ pub fn talking(text: &str) -> &str {
                 return "Quiet, I am thinking!";
             }
         } else if text.chars().last().unwrap() == '?' {
-            return "Sure";
+            return "Sure.";
 
+        }else {
+            return "Interesting";
         }
     }
-    "Interesting"
+    ""
 }
