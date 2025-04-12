@@ -1,20 +1,20 @@
-pub fn talking(text: &str) -> &str {
-    if text.is_empty(){
+pub fn talking(text: &str) -> &'static str {
+    // Handle empty input
+    if text.is_empty() {
         return "Just say something!";
     }
-    for (i,char) in text.chars().enumerate() {
-        if i+1 < text.len() && char.is_uppercase() && !text.chars().nth(i+1).unwrap().is_lowercase() {
-            if text.chars().last().unwrap() == '!' {
-                return "There is no need to yell, calm down!";
-            } else if text.chars().last().unwrap() == '?' {
-                return "Quiet, I am thinking!";
-            }
-        } else if i+1 < text.len() && char.is_uppercase() && text.chars().nth(i+1).unwrap().is_lowercase() {
-            return "Sure.";
-
-        }else {
-            return "Interesting";
-        }
+    
+    // Check if the text is all uppercase (yelling)
+    let is_yelling = text.chars().any(|c| c.is_alphabetic()) && 
+                     text.chars().filter(|c| c.is_alphabetic()).all(|c| c.is_uppercase());
+    
+    // Check if the text ends with a question mark
+    let is_question = text.trim_end().ends_with('?');
+    
+    match (is_yelling, is_question) {
+        (true, true) => "Quiet, I am thinking!",
+        (true, false) => "There is no need to yell, calm down!",
+        (false, true) => "Sure.",
+        (false, false) => "Interesting"
     }
-    ""
 }
