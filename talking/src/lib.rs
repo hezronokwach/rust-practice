@@ -1,6 +1,6 @@
 pub fn talking(text: &str) -> &'static str {
-    // Handle empty input
-    if text.is_empty() {
+    // Handle empty input - make sure to trim whitespace
+    if text.trim().is_empty() {
         return "Just say something!";
     }
     
