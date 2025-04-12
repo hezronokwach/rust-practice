@@ -1,11 +1,11 @@
-
 pub fn scytale_cipher(message: String, size: u32) -> String {
     // If the message is empty or size is 0, return the original message
     if message.is_empty() || size == 0 {
         return message;
     }
 
-    let message_len = message.len();
+    let message_chars: Vec<char> = message.chars().collect();
+    let message_len = message_chars.len();
     let size = size as usize;
     
     // Calculate the number of rows needed
@@ -22,7 +22,7 @@ pub fn scytale_cipher(message: String, size: u32) -> String {
             
             // Only add the character if the index is within the message bounds
             if index < message_len {
-                result.push(message.chars().nth(index).unwrap());
+                result.push(message_chars[index]);
             }
         }
     }
