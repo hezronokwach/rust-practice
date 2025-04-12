@@ -1,4 +1,4 @@
-pub fn narcissistic(n: u64) -> bool {
+pub fn number_logic(n: u64) -> bool {
     // Convert the number to a string to easily get its digits
     let digits_str = n.to_string();
     
