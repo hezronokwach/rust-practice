@@ -53,14 +53,24 @@ impl<T> List<T> {
     }
 
     pub fn len(&self) -> usize {
-        let mut count = 0;
-        let mut current_opt = &self.head;
-
-        while let Some(node) = current_opt {
-            count += 1;
-            current_opt = &node.next.as_deref();
+        fn count_nodes<T>(node: &Option<Node<T>>) -> usize {
+            match node {
+                None => 0,
+                Some(n) => {
+                    let mut count = 1; // Count this node
+                    let mut current = &n.next;
+                    
+                    // Count all nodes in the chain
+                    while let Some(boxed_node) = current {
+                        count += 1;
+                        current = &boxed_node.next;
+                    }
+                    
+                    count
+                }
+            }
         }
-
-        count
+        
+        count_nodes(&self.head)
     }
 }
