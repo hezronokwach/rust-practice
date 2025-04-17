@@ -28,8 +28,8 @@ impl<T> List<T> {
         }
 
         // Otherwise, create a new node that points to the current head
-        let mut current_head = self.head.take().unwrap();
-        let mut new_head = Node {
+        let current_head = self.head.take().unwrap();
+        let new_head = Node {
             value: new_node.value,
             next: Some(Box::new(current_head)),
         };
@@ -39,18 +39,17 @@ impl<T> List<T> {
     }
 
     pub fn pop(&mut self) {
-        // If the list is empty, do nothing
         if self.head.is_none() {
             return;
         }
 
-        // Take the current head
         let current_head = self.head.take().unwrap();
         
         // If the head has a next node, make it the new head
         if let Some(next_node) = current_head.next {
             self.head = Some(*next_node);
         }
+        // Otherwise, the list is now empty
     }
 
     pub fn len(&self) -> usize {
@@ -60,7 +59,10 @@ impl<T> List<T> {
         // Traverse the list and count nodes
         while let Some(node) = current {
             count += 1;
-            current = &node.next.as_ref().map(|boxed_node| &**boxed_node);
+            current = match &node.next {
+                Some(boxed_node) => &Some(**boxed_node),
+                None => &None,
+            };
         }
 
         count
