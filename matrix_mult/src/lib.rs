@@ -26,6 +26,27 @@ impl<T: Clone> Matrix<T> {
     }
 }
 
+// Implement PartialEq for Matrix to allow comparison in tests
+impl<T: Clone + PartialEq> PartialEq for Matrix<T> {
+    fn eq(&self, other: &Self) -> bool {
+        // Matrices are equal if they have the same dimensions and all elements are equal
+        if self.number_of_rows() != other.number_of_rows() || self.number_of_cols() != other.number_of_cols() {
+            return false;
+        }
+        
+        // Compare each element
+        for i in 0..self.number_of_rows() {
+            for j in 0..self.number_of_cols() {
+                if self.0[i][j] != other.0[i][j] {
+                    return false;
+                }
+            }
+        }
+        
+        true
+    }
+}
+
 impl<T> Mul for Matrix<T>
 where
     T: Clone + Default + std::ops::AddAssign + std::ops::Mul<Output = T>,
