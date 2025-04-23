@@ -1,4 +1,4 @@
-use std::time::{Duration, SystemTime};
+use chrono::Duration;
 use colored::*;
 use std::fmt;
 
@@ -51,13 +51,13 @@ impl<'a> Event<'a> {
             },
             Registration(duration) => {
                 // Calculate hours, minutes, and seconds from the duration
-                let total_seconds = duration.as_secs();
+                let total_seconds = duration.num_seconds();
                 let hours = total_seconds / 3600;
                 let minutes = (total_seconds % 3600) / 60;
                 let seconds = total_seconds % 60;
                 
                 // Format the duration string
-                let formatted_duration = format!("{}h:{}m:{}s", hours, minutes, seconds);
+                let formatted_duration = format!("{}H:{}M:{}S", hours, minutes, seconds);
                 
                 Notification {
                     size: 30,
