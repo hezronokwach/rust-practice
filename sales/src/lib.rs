@@ -31,50 +31,53 @@ impl Cart {
     }
 
     pub fn generate_receipt(&mut self) -> Vec<f32> {
-        // Clear previous receipt
         self.receipt.clear();
         
-        // If no items, return empty receipt
         if self.items.is_empty() {
             return self.receipt.clone();
         }
-
-        // Get prices and sort them
+    
         let mut prices: Vec<f32> = self.items.iter().map(|(_, price)| *price).collect();
         prices.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-
-        // Calculate total discount from "buy three, get one free"
+    
         let mut total_discount = 0.0;
         for chunk in prices.chunks(3) {
             if chunk.len() == 3 {
-                // Cheapest item in each group of 3 is free
                 total_discount += chunk[0];
             }
         }
-
-        // Calculate total price before discount
+    
         let total_price: f32 = prices.iter().sum();
         
-        // If no discount, return original prices sorted
         if total_discount == 0.0 {
             self.receipt = prices.iter().map(|x| (x * 100.0).round() / 100.0).collect();
             self.receipt.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
             return self.receipt.clone();
         }
-
-        // Calculate the scaling factor to distribute discount
+    
         let target_total = total_price - total_discount;
         let scale = target_total / total_price;
-
-        // Apply discount proportionally and round to 2 decimal places
-        self.receipt = prices
+    
+        // Apply scale and round to 2 decimal places
+        let mut adjusted: Vec<f32> = prices
             .iter()
-            .map(|price| ((price * scale * 100.0).round() / 100.0))
+            .map(|price| (price * scale * 100.0).round() / 100.0)
             .collect();
-
-        // Sort receipt prices
+    
+        // Adjust to ensure sum matches target_total
+        let current_sum: f32 = adjusted.iter().sum();
+        let difference = target_total - current_sum;
+        let adjustment = difference / adjusted.len() as f32;
+    
+        // Apply adjustment and re-round
+        adjusted = adjusted
+            .iter()
+            .map(|price| ((price + adjustment) * 100.0).round() / 100.0)
+            .collect();
+    
+        self.receipt = adjusted;
         self.receipt.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-
+    
         self.receipt.clone()
     }
 }
