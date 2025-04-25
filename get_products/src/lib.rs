@@ -3,7 +3,7 @@ pub fn get_products(arr: Vec<usize>) -> Vec<usize> {
     let mut result = vec![1; n];
 
     // Handle edge cases
-    if n == 0 {
+    if n == 0 || n == 1 {
         return Vec::new();
     }
 
