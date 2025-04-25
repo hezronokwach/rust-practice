@@ -3,8 +3,8 @@ pub struct Numbers<'a> {
     numbers: &'a [u32],
 }
 
-impl Numbers {
-    pub fn new(numbers: &[u32]) -> Self {
+impl <'a> Numbers <'a> {
+    pub fn new(numbers: &'a[u32]) -> Self {
         Self{numbers}
     }
 
@@ -17,13 +17,13 @@ impl Numbers {
     }
 
     pub fn highest(&self) -> Option<u32> {
-        let result = self.number.sort();
-        Some(result.last())
+        self.numbers.iter().max().copied()
     }
 
     pub fn highest_three(&self) -> Vec<u32> {
-        let mut result = self.number.sort();
-        result.reverse();
-        result[0..3].to_vec()
+        let mut result: Vec<u32> = self.numbers.to_vec();
+        result.sort_by(|a, b| b.cmp(a));
+        result.truncate(3); 
+        result
     }
 }
