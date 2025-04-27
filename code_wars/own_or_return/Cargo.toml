@@ -1,5 +1,5 @@
 [package]
-name = "highest"
+name = "own_or_return"
 version = "0.1.0"
 edition = "2021"
 
